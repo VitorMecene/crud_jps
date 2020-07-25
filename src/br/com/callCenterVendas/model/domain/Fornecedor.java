@@ -21,7 +21,7 @@ public class Fornecedor extends Pessoa {
 		super();
 	}
 
-	public Fornecedor(Integer codigo, String email, String nome, String razaoSocial, String cnpj) {
+	public Fornecedor(Integer codigo, String nome, String email, String razaoSocial, String cnpj) {
 		super(codigo, email, nome);
 		this.razaoSocial = razaoSocial;
 		this.cnpj = cnpj;

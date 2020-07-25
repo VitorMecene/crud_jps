@@ -10,6 +10,7 @@
 <body>
 
 	<form method="POST" action="FornecedorServlet">
+		<input type="hidden" name="codigo" value="${fornecedor.codigo}">
 		Codigo <input type="text" disabled name="codigo" value="${fornecedor.codigo}" /><br>
 		Nome Fantasia <input type="text" name="nome" value="${fornecedor.nome}" /><br>
 		Razao Social <input type="text" name="razaoSocial" value="${fornecedor.razaoSocial}" /><br>
@@ -28,6 +29,8 @@
 				<th>Razão Social</th>
 				<th>CNPJ</th>
 				<th>Email</th>
+				<th>Editar</th>
+				<th>Excluir</th>
 			</tr>
 			<c:forEach var="f" items="${fornecedores}">
 				<tr>
@@ -36,6 +39,8 @@
 					<td>${f.razaoSocial}</td>
 					<td>${f.cnpj}</td>
 					<td>${f.email}</td>
+					<td><a href=FornecedorServlet?acao=editar&codigo=${f.codigo}> Editar</a></td>
+					<td><a href=FornecedorServlet?acao=excluir&codigo=${f.codigo}> Excluir</a></td>
 				</tr>
 			</c:forEach>
 		</table>

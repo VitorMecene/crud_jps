@@ -30,12 +30,26 @@ public class FornecedorServlet extends HttpServlet {
 //		List<Fornecedor> fornecedores = new ArrayList<>();
 //		fornecedores.add(new Fornecedor(1,"fulano@gmail.com","Alpargatas","teste","1231-2"));
 
+		String acao = request.getParameter("acao");
+		String codigo = request.getParameter("codigo");
+		
 		try {
+			if (acao != null && acao.equals("excluir")) {
+				Integer codFornecedor = Integer.parseInt(codigo);
+				fornecedorDao.excluir(codFornecedor);
+				request.setAttribute("mensagem", "Fornecedor excluido com sucesso. ");
+			} else if (acao != null && acao.equals("editar")) {
+				Integer codFornecedor = Integer.parseInt(codigo);
+				Fornecedor fornecedor = fornecedorDao.getFornecedorId(codFornecedor);
+				request.setAttribute("fornecedor", fornecedor);
+			}
 			request.setAttribute("fornecedores", fornecedorDao.getFornecedores());
 		} catch (SQLException e) {
-			request.setAttribute("mensagem", "Erro de Banco de Dados" + e.getMessage());
+			request.setAttribute("mensagem", "Erro de Banco de Dados. " + e.getMessage());
 		} catch (ClassNotFoundException e) {
-			request.setAttribute("mensagem", "Erro de Driver" + e.getMessage());
+			request.setAttribute("mensagem", "Erro de Driver. " + e.getMessage());
+		} catch (ValidacaoException e) {
+			request.setAttribute("mensagem", "Erro de Driver. " + e.getMessage());
 		}
 
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/paginas/fornecedores.jsp");
@@ -48,12 +62,22 @@ public class FornecedorServlet extends HttpServlet {
 		String razaoSocial = request.getParameter("razaoSocial");
 		String email = request.getParameter("email");
 		String cnpj = request.getParameter("cnpj");
+		String codigo = request.getParameter("codigo");
 		Fornecedor fornecedor = new Fornecedor(null, nome, email, razaoSocial, cnpj);
 
+		if (codigo != null && !codigo.equals("")) {
+			fornecedor.setCodigo(Integer.parseInt(codigo));
+		}
+		
 		try {
 			fornecedor.valida();
-			fornecedorDao.salvar(fornecedor);
-			request.setAttribute("mensagem", "Fornecedor salvo com sucesso. ");
+			if(fornecedor.getCodigo() != null) {
+				fornecedorDao.atualizar(fornecedor);
+				request.setAttribute("mensagem", "Fornecedor atualizado com sucesso. ");
+			} else {
+				fornecedorDao.salvar(fornecedor);
+				request.setAttribute("mensagem", "Fornecedor salvo com sucesso. ");
+			}
 		} catch (ValidacaoException e) {
 			request.setAttribute("mensagem", "Erro de validação dos campos. " + e.getMessage());
 			request.setAttribute("fornecedores", fornecedor);
