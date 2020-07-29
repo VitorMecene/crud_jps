@@ -16,48 +16,60 @@ import util.ValidacaoException;
 
 @WebServlet("/FornecedorServlet")
 public class FornecedorServlet extends HttpServlet {
-
-	private FornecedorDao fornecedorDao = new FornecedorDao();
 	private static final long serialVersionUID = 1L;
 
-	public FornecedorServlet() {
-		super();
+	private FornecedorDao fornecedorDao = new FornecedorDao();
 
-	}
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-//		List<Fornecedor> fornecedores = new ArrayList<>();
-//		fornecedores.add(new Fornecedor(1,"fulano@gmail.com","Alpargatas","teste","1231-2"));
 
-		String acao = request.getParameter("acao");
-		String codigo = request.getParameter("codigo");
-		
 		try {
-			if (acao != null && acao.equals("excluir")) {
-				Integer codFornecedor = Integer.parseInt(codigo);
-				fornecedorDao.excluir(codFornecedor);
-				request.setAttribute("mensagem", "Fornecedor excluido com sucesso. ");
-			} else if (acao != null && acao.equals("editar")) {
-				Integer codFornecedor = Integer.parseInt(codigo);
-				Fornecedor fornecedor = fornecedorDao.getFornecedorId(codFornecedor);
-				request.setAttribute("fornecedor", fornecedor);
+			String acao = request.getParameter("acao");
+			if (acao != null) {
+
+				if (acao.equals("CREATE") || acao.equals("UPDATE")) {
+					Fornecedor fornecedor = criaFornecedor(request);
+
+					try {
+						fornecedor.valida();
+					} catch (ValidacaoException e) {
+						request.setAttribute("mensagem", "Erro de validação dos campos. " + e.getMessage());
+						request.setAttribute("fornecedores", fornecedor);
+					}
+
+					if (fornecedor.getCodigo() == null) {
+						fornecedorDao.salvar(fornecedor);
+						request.setAttribute("mensagem", "Fornecedor salvo com sucesso. ");
+					} else {
+						fornecedorDao.atualizar(fornecedor);
+						request.setAttribute("mensagem", "Fornecedor atualizado com sucesso. ");
+					}
+
+				} else if (acao.equals("RETRIEVE")) {
+					String codigo = request.getParameter("codigo");
+					Integer codFornecedor = Integer.parseInt(codigo);
+					Fornecedor fornecedor = fornecedorDao.getFornecedorId(codFornecedor);
+					request.setAttribute("fornecedor", fornecedor);
+				} else if (acao.equals("DELETE")) {
+					String codigo = request.getParameter("codigo");
+					Integer codFornecedor = Integer.parseInt(codigo);
+					fornecedorDao.excluir(codFornecedor);
+					request.setAttribute("mensagem", "Fornecedor excluido com sucesso. ");
+				}
 			}
 			request.setAttribute("fornecedores", fornecedorDao.getFornecedores());
-		} catch (SQLException e) {
-			request.setAttribute("mensagem", "Erro de Banco de Dados. " + e.getMessage());
-		} catch (ClassNotFoundException e) {
-			request.setAttribute("mensagem", "Erro de Driver. " + e.getMessage());
-		} catch (ValidacaoException e) {
-			request.setAttribute("mensagem", "Erro de Driver. " + e.getMessage());
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/paginas/fornecedores.jsp");
+			dispatcher.forward(request, response);
+
+		} catch (SQLException | ClassNotFoundException | IllegalArgumentException e) {
+			request.setAttribute("mensagem", "Erro: " + e.getMessage());
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/paginas/erro.jsp");
+			dispatcher.forward(request, response);
 		}
 
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/paginas/fornecedores.jsp");
-		dispatcher.forward(request, response);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	private Fornecedor criaFornecedor(HttpServletRequest request) {
 		String nome = request.getParameter("nome");
 		String razaoSocial = request.getParameter("razaoSocial");
 		String email = request.getParameter("email");
@@ -68,40 +80,7 @@ public class FornecedorServlet extends HttpServlet {
 		if (codigo != null && !codigo.equals("")) {
 			fornecedor.setCodigo(Integer.parseInt(codigo));
 		}
-		
-		try {
-			fornecedor.valida();
-			if(fornecedor.getCodigo() != null) {
-				fornecedorDao.atualizar(fornecedor);
-				request.setAttribute("mensagem", "Fornecedor atualizado com sucesso. ");
-			} else {
-				fornecedorDao.salvar(fornecedor);
-				request.setAttribute("mensagem", "Fornecedor salvo com sucesso. ");
-			}
-		} catch (ValidacaoException e) {
-			request.setAttribute("mensagem", "Erro de validação dos campos. " + e.getMessage());
-			request.setAttribute("fornecedores", fornecedor);
-		} catch (SQLException e) {
-			request.setAttribute("mensagem", "Erro de Banco de Dados. " + e.getMessage());
-			request.setAttribute("fornecedores", fornecedor);
-		} catch (ClassNotFoundException e) {
-			request.setAttribute("mensagem", "Erro de Driver. " + e.getMessage());
-			request.setAttribute("fornecedores", fornecedor);
-		}
-		
-		try {
-			request.setAttribute("fornecedores", fornecedorDao.getFornecedores());
-		} catch (SQLException e) {
-			request.setAttribute("mensagem", "Erro de Banco de Dados. " + e.getMessage());
-			request.setAttribute("fornecedores", fornecedor);
-		} catch (ClassNotFoundException e) {
-			request.setAttribute("mensagem", "Erro de Driver. " + e.getMessage());
-			request.setAttribute("fornecedores", fornecedor);
-		}
-
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/paginas/fornecedores.jsp");
-		dispatcher.forward(request, response);
-
+		return fornecedor;
 	}
 
 }

@@ -53,7 +53,7 @@ public class FornecedorDao {
 		statement.execute();
 	}
 
-	public Fornecedor getFornecedorId(Integer codFornecedor) throws SQLException, ClassNotFoundException, ValidacaoException {
+	public Fornecedor getFornecedorId(Integer codFornecedor) throws SQLException, ClassNotFoundException, IllegalArgumentException {
 		Connection conexao = ConexaoJDBCFactory.getConexao();
 		PreparedStatement ps = conexao.prepareStatement("SELECT CD_FORNECEDOR, NM_FORNECEDOR, DS_EMAIL, DS_RAZAO_SOCIAL, DS_CNPJ "
 				                                      + "FROM student.tb_fornecedor WHERE CD_FORNECEDOR = ?");
@@ -63,7 +63,7 @@ public class FornecedorDao {
 		if (rs.next()) {
 			return new Fornecedor(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5));
 		}
-		throw new ValidacaoException ("Codigo de fornecedor não encontrado");
+		throw new IllegalArgumentException ("Codigo de fornecedor não encontrado");
 	}
 
 	public void atualizar(Fornecedor fornecedor) throws SQLException, ClassNotFoundException {
