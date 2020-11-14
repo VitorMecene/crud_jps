@@ -7,8 +7,9 @@ import java.sql.SQLException;
 public class ConexaoJDBCFactory {
 	
 	public static Connection getConexao() throws SQLException, ClassNotFoundException {
-			Class.forName("com.mysql.jdbc.Driver");
-			return DriverManager.getConnection("jdbc:mysql://localhost:3306/student","root","mecene");
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		return DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SYSTEM","mecene");
+			
 	}
 
 }

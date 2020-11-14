@@ -8,18 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.callCenterVendas.model.domain.Fornecedor;
-import util.ValidacaoException;
+
 
 public class FornecedorDao {
 	
 	public List<Fornecedor> getFornecedores() throws SQLException, ClassNotFoundException {
 		Connection conexao = ConexaoJDBCFactory.getConexao();
-		PreparedStatement ps = conexao.prepareStatement("SELECT CD_FORNECEDOR"
-				                                           + ", NM_FORNECEDOR"
-				                                           + ", DS_EMAIL"
-			                                           	   + ", DS_RAZAO_SOCIAL"
-				                                           + ", DS_CNPJ "
-				                                        + "FROM student.tb_fornecedor;");
+		PreparedStatement ps = conexao.prepareStatement("SELECT CD_FORNECEDOR, NM_FORNECEDOR, DS_EMAIL, DS_RAZAO_SOCIAL, DS_CNPJ "
+			                                           	+ "FROM SYSTEM.TB_FORNECEDOR");
 		ResultSet rs = ps.executeQuery();
 		List<Fornecedor> fornecedores = new ArrayList<>();
 		
@@ -32,12 +28,8 @@ public class FornecedorDao {
 
 	public void salvar(Fornecedor fornecedor) throws SQLException, ClassNotFoundException {
 		Connection conexao = ConexaoJDBCFactory.getConexao();
-		PreparedStatement statement = conexao.prepareStatement("INSERT INTO student.tb_fornecedor "
-				                                               + "(NM_FORNECEDOR"
-                                                               + ", DS_EMAIL"
-                                                               + ", DS_RAZAO_SOCIAL"
-                                                               + ", DS_CNPJ) "
-                                                               + "VALUES(?, ?, ?, ?);");
+		PreparedStatement statement = conexao.prepareStatement("INSERT INTO SYSTEM.TB_FORNECEDOR(CD_FORNECEDOR, NM_FORNECEDOR, DS_EMAIL, DS_RAZAO_SOCIAL, DS_CNPJ)\r\n" + 
+				                                               "VALUES(SEQ_FORNECEDOR.NEXTVAL, ?, ?, ?, ?)");
 		
 		statement.setString(1, fornecedor.getNome());
 		statement.setString(2, fornecedor.getEmail());
@@ -48,7 +40,7 @@ public class FornecedorDao {
 
 	public void excluir(Integer codFornecedor) throws SQLException, ClassNotFoundException {
 		Connection conexao = ConexaoJDBCFactory.getConexao();
-		PreparedStatement statement = conexao.prepareStatement("DELETE FROM student.tb_fornecedor WHERE CD_FORNECEDOR = ?;");
+		PreparedStatement statement = conexao.prepareStatement("DELETE FROM SYSTEM.TB_FORNECEDOR WHERE CD_FORNECEDOR = ?");
 		statement.setInt(1, codFornecedor);
 		statement.execute();
 	}
@@ -56,7 +48,7 @@ public class FornecedorDao {
 	public Fornecedor getFornecedorId(Integer codFornecedor) throws SQLException, ClassNotFoundException, IllegalArgumentException {
 		Connection conexao = ConexaoJDBCFactory.getConexao();
 		PreparedStatement ps = conexao.prepareStatement("SELECT CD_FORNECEDOR, NM_FORNECEDOR, DS_EMAIL, DS_RAZAO_SOCIAL, DS_CNPJ "
-				                                      + "FROM student.tb_fornecedor WHERE CD_FORNECEDOR = ?");
+				                                        + "FROM SYSTEM.TB_FORNECEDOR WHERE CD_FORNECEDOR = ?");
 		ps.setInt(1, codFornecedor);
 		ResultSet rs = ps.executeQuery();
 
@@ -68,9 +60,9 @@ public class FornecedorDao {
 
 	public void atualizar(Fornecedor fornecedor) throws SQLException, ClassNotFoundException {
 		Connection conexao = ConexaoJDBCFactory.getConexao();
-		PreparedStatement statement = conexao.prepareStatement("UPDATE student.tb_fornecedor "
-				+ "SET NM_FORNECEDOR= ?, DS_EMAIL= ?, DS_RAZAO_SOCIAL= ?, DS_CNPJ= ?"
-				+ "WHERE CD_FORNECEDOR=?;");
+		PreparedStatement statement = conexao.prepareStatement("UPDATE SYSTEM.TB_FORNECEDOR "
+				                                                + "SET NM_FORNECEDOR = ?, DS_EMAIL = ?, DS_RAZAO_SOCIAL = ?, DS_CNPJ = ? "
+				                                              + "WHERE CD_FORNECEDOR = ?");
 		
 		statement.setString(1, fornecedor.getNome());
 		statement.setString(2, fornecedor.getEmail());
