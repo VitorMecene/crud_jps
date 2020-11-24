@@ -1,4 +1,4 @@
-package br.com.callCenterVendas.model.dao;
+package br.com.moderacaoFinanceira.model.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,4 @@
-package br.com.callCenterVendas.control;
+package br.com.moderacaoFinanceira.control;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.com.callCenterVendas.model.dao.FornecedorDao;
-import br.com.callCenterVendas.model.domain.Fornecedor;
+import br.com.moderacaoFinanceira.model.dao.FornecedorDao;
+import br.com.moderacaoFinanceira.model.domain.Fornecedor;
 import util.ValidacaoException;
 
 @WebServlet("/FornecedorServlet")

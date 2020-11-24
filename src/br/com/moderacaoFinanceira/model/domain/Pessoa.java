@@ -1,4 +1,4 @@
-package br.com.callCenterVendas.model.domain;
+package br.com.moderacaoFinanceira.model.domain;
 
 import util.ValidacaoException;
 
